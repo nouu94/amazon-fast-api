@@ -33,7 +33,7 @@ def generate_random_product():
     store = fake.company()
     description = random_row['Spec']
     image_url = f"https://example.com/image/{asin}.jpg"
-    category = random_row['Vendor']
+    category = random_row['Type']
     stock = random.randint(0, 100)
     rating = round(random.uniform(2, 5), 1)
     review_count = random.randint(0, 1000)
