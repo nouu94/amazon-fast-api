@@ -74,4 +74,4 @@ def insert_data():
 if __name__ == "__main__":
     while True:
         insert_data()
-        time.sleep(60)  # 60초 간격으로 삽입
+        time.sleep(20)  # 60초 간격으로 삽입
