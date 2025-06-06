@@ -4,29 +4,20 @@ from faker import Faker
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models import Product
-from datetime import datetime, timezone
+from datetime import datetime
 from zoneinfo import ZoneInfo
 import logging
-import random 
-import pandas as pd 
+import pandas as pd
+from concurrent.futures import ThreadPoolExecutor
 
 fake = Faker()
-
-# pandas를 사용하여 엑셀 파일에서 데이터를 읽어옵니다.
-# critical : 엑셀 파일은 'spec_data_20000.xlsx'로 가정하지만 추후 장비의 스펙 공부 후 데이터를 다시 만들어야 됩니다.
 df = pd.read_excel("spec_data_20000.xlsx")
 
 
-# Faker를 사용하여 랜덤한 상품 데이터를 생성하는 함수
-# 이 함수는 ASIN, 제목, 가격, 통화, 스토어, 설명, 이미지 URL, 카테고리, 재고, 평점 및 리뷰 수를 포함합니다.
-# 생성된 데이터는 Product 모델에 맞춰져 있으며, 생성 및 업데이트 시간은 현재 UTC 시간으로 설정됩니다.
 def generate_random_product():
-
-    # 랜덤으로 행을 선택
     random_row = df.sample(1).iloc[0]
 
-
-    asin = fake.unique.bothify(text='B#########')  # warning : 랜덤 ASIN 중복 가능성 있음!
+    asin = fake.unique.bothify(text='B#########')
     title = f"{random_row['Vendor']} {random_row['Model']} {fake.word().capitalize()}"
     price = round(random.uniform(200.0, 4000.0), 2)
     currency = "USD"
@@ -70,8 +61,25 @@ def insert_data():
         db.close()
 
 
+def get_insert_count_by_probability():
+    chance = random.random()  # 0.0 ~ 1.0 사이 실수
+    if chance < 0.01:      # 5% 확률
+        return 3
+    elif chance < 0.10:    # 추가 10% 확률
+        return 2
+    else:                  # 나머지
+        return 1
+
+
+def insert_multiple_data(n):
+    # n개의 데이터를 동시에 삽입 (스레드 풀 사용)
+    with ThreadPoolExecutor(max_workers=n) as executor: # 최대 n개의 스레드를 만들어 동시에 작업을 처리할 수 있게 합니다.
+        executor.map(lambda _: insert_data(), range(n)) # executor.map(lambda _: insert_data(), range(n))
+
 
 if __name__ == "__main__":
+    # 20초마다 확률에 따라 1~3개의 데이터를 삽입
     while True:
-        insert_data()
-        time.sleep(20)  # 60초 간격으로 삽입
+        count = get_insert_count_by_probability()
+        insert_multiple_data(count)
+        time.sleep(20)
