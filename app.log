@@ -1,0 +1,25 @@
+2025-06-06 12:37:19,332 [ERROR] Error inserting data
+Traceback (most recent call last):
+  File "C:\Users\ck12q\AppData\Local\Programs\Python\Python310\lib\site-packages\pandas\core\indexes\base.py", line 3802, in get_loc
+    return self._engine.get_loc(casted_key)
+  File "pandas\_libs\index.pyx", line 138, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\index.pyx", line 165, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5745, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5753, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Description'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\dev\python\app\generator\generator.py", line 61, in insert_data
+    product = generate_random_product()
+  File "D:\dev\python\app\generator\generator.py", line 34, in generate_random_product
+    description = random_row['Description']
+  File "C:\Users\ck12q\AppData\Local\Programs\Python\Python310\lib\site-packages\pandas\core\series.py", line 981, in __getitem__
+    return self._get_value(key)
+  File "C:\Users\ck12q\AppData\Local\Programs\Python\Python310\lib\site-packages\pandas\core\series.py", line 1089, in _get_value
+    loc = self.index.get_loc(label)
+  File "C:\Users\ck12q\AppData\Local\Programs\Python\Python310\lib\site-packages\pandas\core\indexes\base.py", line 3804, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Description'
+2025-06-06 12:45:25,367 [INFO] 검색 요청: 스토리지
